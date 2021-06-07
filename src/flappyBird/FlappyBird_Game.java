@@ -33,7 +33,7 @@ public class FlappyBird_Game extends Application {
     private long spaceClickA,spaceClickB;
     private double motionTime, elapsedTime;
     private boolean CLICKED,CLICKED2, GAME_START, HIT_PIPE1,HIT_PIPE2, GAME_OVER,HIT_FLOOR1,HIT_FLOOR2;
-    private LongValue startNanoTime;
+    private flappyBird.FlappyBird_Game.LongValue startNanoTime;
     private Sprite firstFloor, secondFloor, birdSprite1,birdSprite2;
     private Bird bird;
     private Bird2 bird2;
@@ -58,11 +58,25 @@ public class FlappyBird_Game extends Application {
         setKeyFunctions(main);
         primaryStage.setScene(main);
         primaryStage.show();
-
+        main.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                double posx = mouseEvent.getX();
+                double posy = mouseEvent.getY();
+                give_stage=primaryStage;
+                if(posx>=600&&posx<=800&&posy>=0&&posy<=30){
+                    exitgame();
+                }
+            }
+        });
         startGame();
     }
 
-
+    private void exitgame() {
+        Main exit = new Main();
+        Main.GAME_SET=false;
+        exit.start(give_stage);
+    }
 
     public Parent getContent() {
         root = new Group();
@@ -77,6 +91,7 @@ public class FlappyBird_Game extends Application {
         pipes = new ArrayList<>();
         setBird();
         if(FlappyBird_Main.birdamount == 2){
+            setBird2();
         }
         setLabels();
         setPipes();
@@ -96,12 +111,19 @@ public class FlappyBird_Game extends Application {
         birdSprite1.render(gc);
     }
 
-
+    private void setBird2() {
+        bird2 = new Bird2();
+        birdSprite2 = bird2.getBird();
+        birdSprite2.render(gc);
+    }
 
     public void setKeyFunctions(Scene scene) {
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.SPACE) {
                 setOnUserInput1();
+            }
+            if(e.getCode()==KeyCode.W){
+                setOnUserInput2();
             }
         });
     }
@@ -124,7 +146,21 @@ public class FlappyBird_Game extends Application {
         }
     }
 
-
+    private void setOnUserInput2() {
+        if (!HIT_PIPE2) {
+            CLICKED2 = true;
+            if (!GAME_START) {
+                root.getChildren().remove(startGame);
+                GAME_START = true;
+            } else {
+                spaceClickB = System.currentTimeMillis();
+                birdSprite2.setVelocity(0, -250);
+            }
+        }
+        if (GAME_OVER==true) {
+            startNewGame();
+        }
+    }
 
     public void setLabels() {
         scoreLabel = new Text("0");
@@ -184,8 +220,73 @@ public class FlappyBird_Game extends Application {
     }
 
     public void startGame() {
+        if(FlappyBird_Main.birdamount==2) {
+            startNanoTime = new flappyBird.FlappyBird_Game.LongValue(System.nanoTime());
+            timer = new AnimationTimer() {
+                public void handle(long now) {
+                    elapsedTime = (now - startNanoTime.value) / 1000000000.0;
+                    startNanoTime.value = now;
+                    gc.clearRect(0, 0, APP_WIDTH, APP_HEIGHT);
+                    birdGC1.clearRect(0, 0, APP_WIDTH, APP_HEIGHT);
+                    birdGC2.clearRect(0, 0, APP_WIDTH, APP_HEIGHT);
+                    moveFloor();                    //让地上会跟随小鸟移动
+                    checkTimeBetweenSpaceHits1();    //判断按键
+                    checkTimeBetweenSpaceHits2();
+                    if (GAME_START) {
+                        renderPipes();  //显示出管子
+                        checkPipeScroll();  //让管子随着移动的地板消失
+                        updateTotalScore();
 
-            startNanoTime = new LongValue(System.nanoTime());
+                        if (birdHitPipe1() || birdHitPipe2()) {
+                            if (!root.getChildren().contains(player1)||!root.getChildren().contains(player2)) {
+                                if(HIT_PIPE1){
+                                    root.getChildren().add(player1);
+                                    bird1_lose=true;
+                                }
+                                else if(HIT_PIPE2){
+                                    root.getChildren().add(player2);
+                                    bird2_lose=true;
+                                }
+                            }
+                            stopScroll();
+                            playHitSound();
+                            motionTime += 0.18;
+                            if (motionTime > 1) {
+                                birdSprite1.addVelocity(-200, 400);
+                                birdSprite1.render(gc);
+                                birdSprite1.update(elapsedTime);
+                                birdSprite2.addVelocity(-200, 400);
+                                birdSprite2.render(gc);
+                                birdSprite2.update(elapsedTime);
+                                motionTime = 0;
+                            }
+                            GAME_OVER = true;
+                            timer.stop();
+                        }
+
+                        if (birdHitFloor1() || birdHitFloor2()) {
+                            if (!root.getChildren().contains(player1)||!root.getChildren().contains(player2)) {
+                                if(HIT_FLOOR1){
+                                    root.getChildren().add(player1);
+                                    bird1_lose=true;
+                                }
+                                else if(HIT_FLOOR2){
+                                    root.getChildren().add(player2);
+                                    bird2_lose=true;
+                                }
+                            }
+                            stopScroll();
+                            playHitSound();
+                            GAME_OVER = true;
+                            timer.stop();
+                        }
+                    }
+                }
+            };
+            timer.start();
+        }
+        else{
+            startNanoTime = new flappyBird.FlappyBird_Game.LongValue(System.nanoTime());
             timer = new AnimationTimer() {
                 public void handle(long now) {
                     elapsedTime = (now - startNanoTime.value) / 1000000000.0;
@@ -227,6 +328,7 @@ public class FlappyBird_Game extends Application {
                 }
             };
             timer.start();
+        }
     }
 
     public void startNewGame() {
@@ -248,6 +350,7 @@ public class FlappyBird_Game extends Application {
         setFloor();
         setPipes();
         setBird();
+        setBird2();
         resetVariables();
         startGame();
     }
@@ -280,7 +383,18 @@ public class FlappyBird_Game extends Application {
         }
     }
 
+    private void checkTimeBetweenSpaceHits2() {
+        long difference = (System.currentTimeMillis() - spaceClickB) / 300;
 
+        if (difference >= .001 && CLICKED2) {
+            CLICKED2 = false;
+            birdSprite2.addVelocity(0, 800);
+            birdSprite2.render(birdGC2);
+            birdSprite2.update(elapsedTime);
+        } else {
+            animateBird2();
+        }
+    }
 
     private void updateTotalScore() {
         if (!HIT_PIPE1) {
@@ -326,7 +440,18 @@ public class FlappyBird_Game extends Application {
         }
     }
 
-
+    public void animateBird2(){
+        birdSprite2.render(birdGC2);
+        birdSprite2.update(elapsedTime);
+        motionTime += 0.18;
+        if (motionTime > 0.5 && CLICKED2) {
+            Sprite temp = birdSprite2;
+            birdSprite2 = bird2.animate();
+            birdSprite2.setPositionXY(temp.getPositionX(), temp.getPositionY());
+            birdSprite2.setVelocity(temp.getVelocityX(), temp.getVelocityY());
+            motionTime = 0;
+        }
+    }
 
     private boolean birdHitPipe1() {
         for (Pipe pipe : pipes) {
@@ -339,7 +464,16 @@ public class FlappyBird_Game extends Application {
         return false;
     }
 
-
+    private boolean birdHitPipe2() {
+        for (Pipe pipe : pipes) {
+            if (!HIT_PIPE2 && birdSprite2.intersectsSprite(pipe.getPipe())) {
+                HIT_PIPE2 = true;
+                showHitEffect();
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void showHitEffect() {
         ParallelTransition parallelTransition = new ParallelTransition();
@@ -365,7 +499,15 @@ public class FlappyBird_Game extends Application {
         return false;
     }
 
-
+    private boolean birdHitFloor2() {
+        if(birdSprite2.intersectsSprite(firstFloor) ||
+                birdSprite2.intersectsSprite(secondFloor) ||
+                birdSprite2.getPositionX() < 0){
+            HIT_FLOOR2=true;
+            return true;
+        }
+        return false;
+    }
 
     private void stopScroll() {
         for (Pipe pipe : pipes) {
