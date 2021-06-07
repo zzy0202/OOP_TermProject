@@ -1,7 +1,5 @@
 package flappyBird;
 import main.Main;
-
-
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -42,14 +40,23 @@ public class FlappyBird_Main extends Application {
         background.setFitWidth(800);
         background.setFitHeight(700);
 
-
+        ImageView exit = new ImageView(new Image(getClass().getResource("/images/exit.jpg").toExternalForm()));
+        exit.setFitWidth(200);
+        exit.setFitHeight(30);
+        exit.setLayoutX(0);
+        exit.setLayoutY(0);
 
         Rectangle bg = new Rectangle(800, 700);
         bg.setFill(Color.rgb(78,192,202));
 
+        Text inst = new Text("Press 1 for Single Player \n    2 for Double Player");
+        inst.setFont(Font.font("Courier", FontWeight.EXTRA_BOLD, 25));
+        inst.setFill(Color.WHITE);
+        inst.setStroke(Color.BLACK);
+        inst.setLayoutX(275);
+        inst.setLayoutY(400);
 
-
-        root.getChildren().addAll(background, title, flappyBird);
+        root.getChildren().addAll(background, title, flappyBird,exit,inst);
         return root;
     }
 
@@ -85,7 +92,16 @@ public class FlappyBird_Main extends Application {
                 exception.printStackTrace();
             }
         });
-
+        scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                double posx = mouseEvent.getX();
+                double posy = mouseEvent.getY();
+                if(posx>=0&&posx<=200&&posy>=0&&posy<=30){
+                    exitFlappy();
+                }
+            }
+        });
         primaryStage.setTitle("Super Smash Flappy Bird!");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
@@ -95,7 +111,11 @@ public class FlappyBird_Main extends Application {
 
     }
 
-
+    private void exitFlappy() {
+        Main exit = new Main();
+        exit.start(give_stage1);
+        Main.GAME_SET=false;
+    }
 
 
     public static void main(String[] args) {
