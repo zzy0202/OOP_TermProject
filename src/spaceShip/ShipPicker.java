@@ -5,6 +5,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+/**
+ * 这个类是用来当要开始游戏时，选择飞船角色的按钮
+ */
 public class ShipPicker extends VBox {
     private ImageView circleImage;
     private ImageView shipImage;
@@ -32,6 +35,10 @@ public class ShipPicker extends VBox {
         return this.isCircleChoosen;
     }
 
+    /**
+     * 判断按钮是否选中并设置角色
+     * @param isCircleChoosen
+     */
     public void setIsCircleChoosen(boolean isCircleChoosen) {
         this.isCircleChoosen = isCircleChoosen;
         String imageToSet = this.isCircleChoosen ? this.circleChoosen : this.circleNotChoosen;
