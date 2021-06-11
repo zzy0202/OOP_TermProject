@@ -1,5 +1,9 @@
 package model;
 
+/**
+ * @author shiran
+ * 定义飞船和游戏剩余次数的枚举类
+ */
 public enum SHIP {
     BLUE("/resources/blue_ship.png", "/resources/blue_life.png"),
     GREEN("/resources/green_ship.png", "/resources/green_life.png"),
