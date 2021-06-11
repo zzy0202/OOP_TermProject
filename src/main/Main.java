@@ -1,8 +1,5 @@
 package main;
-
-import flappyBird.FlappyBird_Game;
 import flappyBird.FlappyBird_Main;
-import spaceShip.SpaceShip_Main;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -17,14 +14,24 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import spaceShip.SpaceShip_Main;
 
+/**
+ * @author 朱章涌 <br>
+ * 这个类是用来生成程序的主界面的
+ */
 public class Main extends Application {
-    public static boolean GAME_SET;
-    public static int i=0;
-    Stage give_stage;
-    private Parent createContent() {
-        Pane root = new Pane();
+    /**
+     * 用来保存当前的窗口，并赋给下一个游戏类对象，以便能在一个窗口运行所有程序。
+     */
+    public Stage give_stage;
 
+    /**
+     * 这个方法是用来让图形挂载到root上的,利用javafx里的ImageView就能获取src文件里的图片资源了 <br>
+     * @return 已经加上图片了的root
+     */
+    public Parent createContent() {
+        Pane root = new Pane();
         ImageView background = new ImageView(new Image(getClass().getResource("/images/mainbg.png").toExternalForm()));
         background.setFitWidth(800);
         background.setFitHeight(700);
@@ -67,22 +74,14 @@ public class Main extends Application {
         return root;
     }
 
-    public void startGame() throws Exception {
-        if (!GAME_SET) {
-            GAME_SET = true;
-            FlappyBird_Game game = new FlappyBird_Game();
-            Stage st = new Stage();
-            try {
-                game.start(st);
-            } catch (Exception e1) {
-                game.start(st);
-                e1.printStackTrace();
-            }
-        }
-    }
-
+    /**
+     * 这个方法是用于设置窗口的一些初始化如设置标题，应用图标 <br>
+     * 里面的有一个scene.setOnMouseClicked方法是用于判断鼠标点击位置，进行判断进入哪个游戏。
+     * @param primaryStage 作为一个容器,即负责存放scene以作为一个窗口
+     */
     @Override
     public void start(Stage primaryStage)  {
+        give_stage=primaryStage;
         Scene scene = new Scene(createContent());
         scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -104,36 +103,36 @@ public class Main extends Application {
         primaryStage.setTitle("Gaming Time!");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
-        primaryStage.getIcons().add(new Image("images//Mainicon.png"));
+        primaryStage.getIcons().add(new Image("/images/Mainicon.png"));
         primaryStage.show();
         give_stage=primaryStage;
 
     }
 
+    /**
+     * 当点击了FlappyBird图标后便会到这个方法，并生成FlappyBird_Main进入另外一个窗口<br>
+     * 以GAME_SET作为判断。
+     */
     public void startFlappy()  {
-        if (!GAME_SET) {
-            GAME_SET = true;
-            FlappyBird_Main main = new FlappyBird_Main();
-            try {
-                main.start(give_stage);
-            } catch (Exception e1) {
-                main.start(give_stage);
-                e1.printStackTrace();
-            }
+        FlappyBird_Main main = new FlappyBird_Main();
+        try {
+            main.start(give_stage);
+        } catch (Exception e1) {
+             e1.printStackTrace();
         }
     }
 
+    /**
+     * 当点击了SpaceShip图标后便会到这个方法，并生成SpaceShip_Main进入另外一个窗口<br>
+     * 以GAME_SET作为判断。
+     * @throws Exception 方法调用失败时抛出异常.
+     */
     public void startSpace_Ship() throws Exception {
-        if (!GAME_SET) {
-            GAME_SET = true;
-            SpaceShip_Main main = new SpaceShip_Main();
-            Stage st = new Stage();
-            try {
-                main.start(give_stage);
-            } catch (Exception e1) {
-                main.start(st);
-                e1.printStackTrace();
-            }
+        SpaceShip_Main main= new SpaceShip_Main();
+        try {
+            main.start(give_stage);
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
     }
 
