@@ -5,7 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 /**
- *
+ * @author 朱章涌
+ * 这个类主要作为动画类,对图片进行位置的更新
  */
 public class Sprite {
     /**
