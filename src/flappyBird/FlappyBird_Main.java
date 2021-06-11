@@ -16,11 +16,28 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * @author 朱章涌
+ * 这个类主要作为游戏FlappyBird的主界面.
+ */
 public class FlappyBird_Main extends Application {
+    /**
+     * 用来判断是否要进行游戏开始的布尔变量
+     */
     public static boolean GAME_SET=false;
-    public static int i;
+    /**
+     * 但玩家在这个界面选择了1时,赋值1进入单人模式,2则进入双人模式
+     */
     public static int birdamount=0;
+    /**
+     *  当我们开始游戏时,可以把这个Stage传给FlappyBird_Game类里,这样就能进行一个游戏回退了.
+     */
     Stage give_stage1;
+
+    /**
+     * 这个方法主要是获得图片以及对图片的属性进行初始化.
+     * @return 一个已经将图片挂载了的Pane实例.
+     */
     private Parent createContent() {
         Pane root = new Pane();
 
@@ -33,8 +50,14 @@ public class FlappyBird_Main extends Application {
         ImageView flappyBird = new ImageView(new Image(getClass().getResource("/images/bird2.png").toExternalForm()));
         flappyBird.setFitWidth(50);
         flappyBird.setFitHeight(45);
-        flappyBird.setLayoutX(375);
+        flappyBird.setLayoutX(325);
         flappyBird.setLayoutY(300);
+
+        ImageView flappyBird2 = new ImageView(new Image(getClass().getResource("/images/bird2_2.png").toExternalForm()));
+        flappyBird2.setFitWidth(50);
+        flappyBird2.setFitHeight(45);
+        flappyBird2.setLayoutX(400);
+        flappyBird2.setLayoutY(300);
 
         ImageView background = new ImageView(new Image(getClass().getResource("/images/background.png").toExternalForm()));
         background.setFitWidth(800);
@@ -53,15 +76,25 @@ public class FlappyBird_Main extends Application {
         inst.setFont(Font.font("Courier", FontWeight.EXTRA_BOLD, 25));
         inst.setFill(Color.WHITE);
         inst.setStroke(Color.BLACK);
-        inst.setLayoutX(275);
+        inst.setLayoutX(245);
         inst.setLayoutY(400);
 
-        root.getChildren().addAll(background, title, flappyBird,exit,inst);
+        Text guide = new Text("Press Spacebar to control yellow bird,W to control purple bird");
+        guide.setFont(Font.font("Courier", FontWeight.EXTRA_BOLD, 20));
+        guide.setFill(Color.WHITE);
+        guide.setStroke(Color.BLACK);
+        guide.setLayoutX(100);
+        guide.setLayoutY(500);
+
+        root.getChildren().addAll(background, title, flappyBird,flappyBird2,guide,exit,inst);
         return root;
     }
 
+    /**
+     * 当输入了1或2时,调用这个方法开始游戏.
+     * @throws Exception
+     */
     public void startGame() throws Exception {
-        System.out.println(GAME_SET);
         GAME_SET=false;
         if (!GAME_SET) {
             GAME_SET = true;
@@ -75,6 +108,10 @@ public class FlappyBird_Main extends Application {
         }
     }
 
+    /**
+     * Javafx提供的start方法,在这里主要对窗口进行初始化和进行输出.并且在里面设置了监听器,当输入1或2时进入游戏.
+     * @param primaryStage Stage对象的实例.
+     */
     @Override
     public void start(Stage primaryStage)  {
         Scene scene = new Scene(createContent());
@@ -105,20 +142,19 @@ public class FlappyBird_Main extends Application {
         primaryStage.setTitle("Super Smash Flappy Bird!");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
-        primaryStage.getIcons().add(new Image("images//icon.png"));
+        primaryStage.getIcons().add(new Image("images/icon.png"));
         primaryStage.show();
         give_stage1=primaryStage;
 
     }
 
+    /**
+     * 当点击'exitgame'图标时，退出游戏.
+     */
     private void exitFlappy() {
         Main exit = new Main();
         exit.start(give_stage1);
-        Main.GAME_SET=false;
     }
 
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
