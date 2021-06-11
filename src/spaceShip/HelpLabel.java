@@ -10,10 +10,18 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.text.Font;
 
+/**
+ * @author shiran
+ * 这个类主要是设置Help界面背景的图片以及字体
+ */
 public class HelpLabel extends Label {
     public static final String FONT_PATH = "/resources/kenvector_future.ttf";
     public static final String BACKGROUND_IMAGE = "/resources/red_small_panel.png";
 
+    /**
+     * 这个方法传入文字之后，按照预定的设置生成。
+     * @param text
+     */
     public HelpLabel(String text) {
         this.setPrefWidth(380.0D);
         this.setPrefHeight(400.0D);
@@ -25,6 +33,9 @@ public class HelpLabel extends Label {
         this.setBackground(new Background(new BackgroundImage[]{backgroundImage}));
     }
 
+    /**
+     * 设置字体样式以及大小
+     */
     private void setLabelFont() {
         this.setFont(Font.loadFont(this.getClass().getResourceAsStream("/resources/kenvector_future.ttf"), 18.0D));
     }
