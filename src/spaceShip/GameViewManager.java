@@ -14,6 +14,9 @@ import javafx.stage.Stage;
 import model.SHIP;
 import model.SmallInfoLabel;
 
+/**
+ * 这个类主要是游戏界面的实现
+ */
 public class GameViewManager {
     private AnchorPane gamePane;
     private Scene gameScene;
@@ -50,6 +53,9 @@ public class GameViewManager {
         this.randomPositionGenerator = new Random();
     }
 
+    /**
+     * 获取玩家用键盘左右键对飞船进行操作
+     */
     private void createKeyListeners() {
         this.gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             public void handle(KeyEvent event) {
@@ -73,6 +79,9 @@ public class GameViewManager {
         });
     }
 
+    /**
+     * 初始化游戏界面
+     */
     private void initializeStage() {
         this.gamePane = new AnchorPane();
         this.gameScene = new Scene(this.gamePane, 600.0D, 800.0D);
@@ -80,6 +89,11 @@ public class GameViewManager {
         this.gameStage.setScene(this.gameScene);
     }
 
+    /**
+     * 开始新游戏时，传入玩家所选择的飞船
+     * @param menuStage
+     * @param choosenShip
+     */
     public void createNewGame(Stage menuStage, SHIP choosenShip) {
         this.menuStage = menuStage;
         this.menuStage.hide();
@@ -90,6 +104,10 @@ public class GameViewManager {
         this.gameStage.show();
     }
 
+    /**
+     * 创建初始化游戏界面里的元素包括飞船游戏时要碰到的星星以及掉落的陨石并且记录玩家的游戏剩余次数
+     * @param choosenShip
+     */
     private void createGameElements(SHIP choosenShip) {
         this.playerLife = 2;
         this.star = new ImageView("/resources/star_gold.png");
@@ -127,6 +145,9 @@ public class GameViewManager {
 
     }
 
+    /**
+     * 设置游戏元素的移动
+     */
     private void moveGameElements() {
         this.star.setLayoutY(this.star.getLayoutY() + 5.0D);
 
@@ -143,6 +164,9 @@ public class GameViewManager {
 
     }
 
+    /**
+     * 判断飞船是否有碰到这些元素（用来以后判断飞船是否有“吃”到星星，或者是否被陨石砸中了）
+     */
     private void checkIfElementAreBehindTheShipAndRelocated() {
         if (this.star.getLayoutY() > 1200.0D) {
             this.setNewElementPosition(this.star);
@@ -163,11 +187,19 @@ public class GameViewManager {
 
     }
 
+    /**
+     * 设置出现的新元素
+     * @param image
+     */
     private void setNewElementPosition(ImageView image) {
         image.setLayoutX((double)this.randomPositionGenerator.nextInt(370));
         image.setLayoutY((double)(-this.randomPositionGenerator.nextInt(3200) + 600));
     }
 
+    /**
+     * 根据玩家选择的飞船角色创建
+     * @param choosenShip
+     */
     private void createShip(SHIP choosenShip) {
         this.ship = new ImageView(choosenShip.getUrl());
         this.ship.setLayoutX(300.0D);
@@ -175,6 +207,9 @@ public class GameViewManager {
         this.gamePane.getChildren().add(this.ship);
     }
 
+    /**
+     * 游戏开始之前的设置
+     */
     private void createGameLoop() {
         this.gameTimer = new AnimationTimer() {
             public void handle(long now) {
@@ -188,6 +223,9 @@ public class GameViewManager {
         this.gameTimer.start();
     }
 
+    /**
+     * 设置飞船的移动
+     */
     private void moveShip() {
         if (this.isLeftKeyPressed && !this.isRightKeyPressed) {
             if (this.angle > -30) {
@@ -233,6 +271,9 @@ public class GameViewManager {
 
     }
 
+    /**
+     * 创建游戏的背景
+     */
     private void createBackground() {
         this.gridPane1 = new GridPane();
         this.gridPane2 = new GridPane();
@@ -250,6 +291,9 @@ public class GameViewManager {
         this.gamePane.getChildren().addAll(new Node[]{this.gridPane1, this.gridPane2});
     }
 
+    /**
+     * 背景的移动
+     */
     private void moveBackground() {
         this.gridPane1.setLayoutY(this.gridPane1.getLayoutY() + 0.5D);
         this.gridPane2.setLayoutY(this.gridPane2.getLayoutY() + 0.5D);
@@ -263,6 +307,9 @@ public class GameViewManager {
 
     }
 
+    /**
+     * 用来判断飞船是否被砸中，如果是则玩家剩余游戏次数-1，如果还没完全耗光游戏次数将会有新的元素继续出现
+     */
     private void checkIfElementsCollide() {
         if (39.0D > this.calculateDistance(this.ship.getLayoutX() + 49.0D, this.star.getLayoutX() + 15.0D, this.ship.getLayoutY() + 37.0D, this.star.getLayoutY() + 15.0D)) {
             this.setNewElementPosition(this.star);
@@ -292,6 +339,9 @@ public class GameViewManager {
 
     }
 
+    /**
+     * 移除玩家剩余游戏次数，如果三次次数都耗光了将会退出游戏
+     */
     private void removeLife() {
         this.gamePane.getChildren().remove(this.playerLifes[this.playerLife]);
         --this.playerLife;
@@ -303,6 +353,14 @@ public class GameViewManager {
 
     }
 
+    /**
+     * 计算距离
+     * @param x1
+     * @param x2
+     * @param y1
+     * @param y2
+     * @return
+     */
     private double calculateDistance(double x1, double x2, double y1, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2.0D) + Math.pow(y1 - y2, 2.0D));
     }
