@@ -11,11 +11,17 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.util.Duration;
 
+/**
+ * 这个主要是用来设置弹窗的规格
+ */
 public class SpaceShipSubScene extends SubScene {
     private static final String FONT_PATH = "/resources/kenvector_future.ttf";
     private static final String BACKGROUND_IMAGE = "/resources/red_panel.png";
     private boolean isHidden;
 
+    /**
+     * 设置弹窗的大小以及导入图片
+     */
     public SpaceShipSubScene() {
         super(new AnchorPane(), 600.0D, 400.0D);
         this.prefWidth(600.0D);
@@ -28,6 +34,9 @@ public class SpaceShipSubScene extends SubScene {
         this.setLayoutY(180.0D);
     }
 
+    /**
+     * 设置弹窗弹出来的效果
+     */
     public void moveSubScene() {
         TranslateTransition transition = new TranslateTransition();
         transition.setDuration(Duration.seconds(0.3D));
